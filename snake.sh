@@ -5,6 +5,8 @@ alive=true
 pixels=(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0)
 snake=(4 3 2 1)
 direction="right"
+x=4
+y=0
 
 printrow(){
 	result="\033[37;47m▄\033[0m"
@@ -29,23 +31,47 @@ drawsnake(){
 	pixels[${snake[-1]}]=0 #blacks over place where tail was 
 	
     if [ "$direction" = "right" ]; then	#reassigns head
-        head=$(( ${snake[0]} + 1 ))   
+        head=$(( ${snake[0]} + 1 ))
+		((x++))
+		if (( x > 14 )); then
+			alive=false
+		fi
     elif [ "$direction" = "left" ]; then
 		head=$(( ${snake[0]} - 1 ))
+		((x--))
+		if (( x < 0 )); then
+			alive=false
+		fi
 	elif [ "$direction" = "down" ]; then
 		head=$(( ${snake[0]} + $resolution ))
+		((y++))
+		if (( y > 14 )); then
+			alive=false
+		fi
 	elif [ "$direction" = "up" ]; then
 		head=$(( ${snake[0]} - $resolution ))
+		((y--))
+		if (( y < 0 )); then
+			alive=false
+		fi
 	fi
+	
+	#list[$var]=2
 
-	snake=("$head" "${snake[@]:0:${#snake[@]}-1}")
-	    for n in "${snake[@]}"; do
-        pixels[n]=2 # green for snake color
-    done
+
+
 
 }
 
+snake=("$head" "${snake[@]:0:${#snake[@]}-1}") #init snake
+for n in "${snake[@]}"; do
+    pixels[n]=2 # green for snake color
+done
+
+
 while $alive; do
+	printScreen
+
 	if read -t 0.2 -n 1 key; then
 		if [[ "$key" == "w" ]]; then
 			direction=up
@@ -66,8 +92,7 @@ while $alive; do
 	fi
 	
 	drawsnake
-	printScreen
-	
 	sleep 0.2
 done
 
+echo "you died"
