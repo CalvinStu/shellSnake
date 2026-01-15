@@ -74,16 +74,32 @@ while $alive; do
 
 	if read -t 0.2 -n 1 key; then
 		if [[ "$key" == "w" ]]; then
-			direction=up
+			if [ "$direction" = "down" ]; then	#reassigns head
+				alive=false
+			else
+				direction=up
+			fi
 			
 		elif [[ "$key" == "s" ]]; then
-			direction=down
+			if [ "$direction" = "up" ]; then	#reassigns head
+				alive=false
+			else
+				direction=down
+			fi
 		
 		elif [[ "$key" == "a" ]]; then
-			direction=left
+			if [ "$direction" = "right" ]; then	#reassigns head
+				alive=false
+			else
+				direction=left
+			fi
 
 		elif [[ "$key" == "d" ]]; then
-			direction=right		
+			if [ "$direction" = "left" ]; then	#reassigns head
+				alive=false
+			else
+				direction=right
+			fi	
 			
 		#else #other key
 			
