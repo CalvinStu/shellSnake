@@ -45,8 +45,9 @@ drawsnake(){
 	elif [ "$direction" = "down" ]; then
 		head=$(( ${snake[0]} + $resolution ))
 		((y++))
-		if (( y > 14 )); then
+		if (( y > 15 )); then
 			alive=false
+			echo $y
 		fi
 	elif [ "$direction" = "up" ]; then
 		head=$(( ${snake[0]} - $resolution ))
@@ -58,19 +59,18 @@ drawsnake(){
 	
 	#list[$var]=2
 
-
-
-
+	snake=("$head" "${snake[@]:0:${#snake[@]}-1}") #init snake
+	for n in "${snake[@]}"; do
+    	pixels[n]=2 # green for snake color
+	done
 }
 
-snake=("$head" "${snake[@]:0:${#snake[@]}-1}") #init snake
-for n in "${snake[@]}"; do
-    pixels[n]=2 # green for snake color
-done
+
 
 
 while $alive; do
 	printScreen
+	sleep 0.2
 
 	if read -t 0.2 -n 1 key; then
 		if [[ "$key" == "w" ]]; then
@@ -92,7 +92,8 @@ while $alive; do
 	fi
 	
 	drawsnake
-	sleep 0.2
+	
+	
 done
 
 echo "you died"
