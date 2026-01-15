@@ -56,17 +56,12 @@ drawsnake(){
 			alive=false
 		fi
 	fi
-	
-	#list[$var]=2
 
 	snake=("$head" "${snake[@]:0:${#snake[@]}-1}") #init snake
 	for n in "${snake[@]}"; do
     	pixels[n]=2 # green for snake color
 	done
 }
-
-
-
 
 while $alive; do
 	printScreen
@@ -100,15 +95,12 @@ while $alive; do
 			else
 				direction=right
 			fi	
-			
 		#else #other key
-			
 		fi
 	#else #no key
 	fi
 	
 	drawsnake
-	
 	
 done
 
