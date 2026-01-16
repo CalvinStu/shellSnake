@@ -40,20 +40,23 @@ drawsnake(){
 		if (( x > 14 )); then
 			alive=false
 		fi
-    elif [ "$direction" = "left" ]; then
+    fi
+	if [ "$direction" = "left" ]; then
 		head=$(( ${snake[0]} - 1 ))
 		((x--))
 		if (( x < 0 )); then
 			alive=false
 		fi
-	elif [ "$direction" = "down" ]; then
+	fi
+	if [ "$direction" = "down" ]; then
 		head=$(( ${snake[0]} + $resolution ))
 		((y++))
 		if (( y > 15 )); then
 			alive=false
 			echo $y
 		fi
-	elif [ "$direction" = "up" ]; then
+	fi
+	if [ "$direction" = "up" ]; then
 		head=$(( ${snake[0]} - $resolution ))
 		((y--))
 		if (( y < 0 )); then
@@ -69,18 +72,29 @@ drawsnake(){
 	
 	if [[ "$apple" -eq "$head" ]]; then #if eating apple
 		((points++))
-		apple=$(( RANDOM % (resolution * resolution + 1) ))
+		
+		spawnNewApple
+
 		pixels[$apple]=1
-		snake=("$head" "${snake[@]}")
+		snake=("$head" "${snake[@]}") #move snake
 		speed=$(( speed * 98 / 100 )) #speed up snake
 	else
-		snake=("$head" "${snake[@]:0:${#snake[@]}-1}") #draw out snake
+		snake=("$head" "${snake[@]:0:${#snake[@]}-1}") #move snake
 	fi
 
 	for n in "${snake[@]}"; do
     	pixels[n]=2 # green for snake color
 	done
 }
+
+spawnNewApple(){
+	apple=$(( RANDOM % (resolution * resolution + 1) ))
+
+    if [ "${screen[$apple]}" -eq 2 ]; then
+        spawnNewApple
+    fi
+}
+
 pixels[$apple]=1 #init apple
 
 while $alive; do
@@ -94,30 +108,31 @@ while $alive; do
 			else
 				direction=up
 			fi
-			
-		elif [[ "$key" == "s" ]]; then
+
+		fi	
+		if [[ "$key" == "s" ]]; then
 			if [ "$direction" = "up" ]; then	#reassigns head
 				alive=false
 			else
 				direction=down
 			fi
 		
-		elif [[ "$key" == "a" ]]; then
+		fi
+		if [[ "$key" == "a" ]]; then
 			if [ "$direction" = "right" ]; then	#reassigns head
 				alive=false
 			else
 				direction=left
 			fi
 
-		elif [[ "$key" == "d" ]]; then
+		fi
+		if [[ "$key" == "d" ]]; then
 			if [ "$direction" = "left" ]; then	#reassigns head
 				alive=false
 			else
 				direction=right
 			fi	
-		#else #other key
 		fi
-	#else #no key
 	fi
 	
 	drawsnake
