@@ -9,7 +9,7 @@ x=4
 y=0
 apple=50
 points=0
-speed=999
+speed=350
 
 printrow(){
 	result="\033[37;47m▄\033[0m"
@@ -25,6 +25,7 @@ printrow(){
 printScreen(){
 	printf "\033[H\033[J"
 	echo $points
+	echo $speed
 	
 	for (( j=0; j<$resolution; j+=2 )); do
 		printrow $j #rownum
@@ -99,9 +100,9 @@ pixels[$apple]=1 #init apple
 
 while $alive; do
 	printScreen
-	#sleep "0.0$speed"
+	sleep "0.$speed"
 
-	if read -t 0.0(($speed/5)) -n 1 key; then
+	if read -t 0.0001 -n 1 key; then
 		if [[ "$key" == "w" ]]; then
 			if [ "$direction" = "down" ]; then	#reassigns head
 				alive=false
