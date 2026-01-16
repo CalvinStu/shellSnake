@@ -3,10 +3,13 @@
 resolution=15
 alive=true
 pixels=(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-snake=(4 3 2 1)
+snake=(4 3 2 1 0)
 direction="right"
 x=4
 y=0
+apple=50
+points=0
+speed=99
 
 printrow(){
 	result="\033[37;47m▄\033[0m"
@@ -21,6 +24,7 @@ printrow(){
 
 printScreen(){
 	printf "\033[H\033[J"
+	echo $points
 	
 	for (( j=0; j<$resolution; j+=2 )); do
 		printrow $j #rownum
@@ -57,15 +61,31 @@ drawsnake(){
 		fi
 	fi
 
-	snake=("$head" "${snake[@]:0:${#snake[@]}-1}") #init snake
+	for num in "${snake[@]:1}"; do #snake hitting self?
+		if [[ "$num" -eq "$head" ]]; then
+        	alive=false
+    	fi
+	done
+	
+	if [[ "$apple" -eq "$head" ]]; then #if eating apple
+		((points++))
+		apple=$(( RANDOM % (resolution * resolution + 1) ))
+		pixels[$apple]=1
+		snake=("$head" "${snake[@]}")
+		speed=$(( speed * 98 / 100 )) #speed up snake
+	else
+		snake=("$head" "${snake[@]:0:${#snake[@]}-1}") #draw out snake
+	fi
+
 	for n in "${snake[@]}"; do
     	pixels[n]=2 # green for snake color
 	done
 }
+pixels[$apple]=1 #init apple
 
 while $alive; do
 	printScreen
-	sleep 0.2
+	sleep "0.0$speed"
 
 	if read -t 0.2 -n 1 key; then
 		if [[ "$key" == "w" ]]; then
