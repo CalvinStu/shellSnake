@@ -9,7 +9,7 @@ x=4
 y=0
 apple=50
 points=0
-speed=99
+speed=999
 
 printrow(){
 	result="\033[37;47m▄\033[0m"
@@ -99,24 +99,22 @@ pixels[$apple]=1 #init apple
 
 while $alive; do
 	printScreen
-	sleep "0.0$speed"
+	#sleep "0.0$speed"
 
-	if read -t 0.2 -n 1 key; then
+	if read -t 0.0(($speed/5)) -n 1 key; then
 		if [[ "$key" == "w" ]]; then
 			if [ "$direction" = "down" ]; then	#reassigns head
 				alive=false
 			else
 				direction=up
 			fi
-
 		fi	
 		if [[ "$key" == "s" ]]; then
 			if [ "$direction" = "up" ]; then	#reassigns head
 				alive=false
 			else
 				direction=down
-			fi
-		
+			fi	
 		fi
 		if [[ "$key" == "a" ]]; then
 			if [ "$direction" = "right" ]; then	#reassigns head
@@ -124,7 +122,6 @@ while $alive; do
 			else
 				direction=left
 			fi
-
 		fi
 		if [[ "$key" == "d" ]]; then
 			if [ "$direction" = "left" ]; then	#reassigns head
